@@ -4,7 +4,23 @@
 #include <SFML/Graphics.hpp>
 #include "vector.h"
 
-const sf::Color DEFAULT_COLOR = sf::Color::Black;
+const sf::Color DEFAULT_COLOR  = sf::Color::Black;
+const int       PHONG_CONSTANT = 32;
+
+class Light {
+private:
+    Vector position;
+    Vector color;
+
+public:
+    explicit Light();
+    explicit Light(Vector& position, Vector& color);
+
+    Vector getPosition() const;
+    Vector getColor() const;
+
+    ~Light() {};
+};
 
 class Sphere {
 private:
@@ -18,11 +34,11 @@ public:
 
     ~Sphere();
 
-    void visualize(sf::RenderWindow& window, Vector* lights);
+    void visualize(sf::RenderWindow& window, const Vector& camera, Light* lights);
 
-    Vector ambientCoeff  (const Vector& light);
-    Vector diffusiveCoeff(const Vector& pointVector, const Vector& light);
-    double phongCoeff    (const Vector& light);
+    Vector ambientCoeff  (const Light& light);
+    Vector diffusiveCoeff(const Vector& pointVector, const Light& light);
+    Vector phongCoeff    (const Vector& camera, const Vector& pointVector, const Light& light);
 };
 
 #define ON_ERROR(expr, errStr, retVal) {                 \

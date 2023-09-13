@@ -28,7 +28,7 @@ double Vector::getZ() const {
     return this->z;
 }
 
-double Vector::angle(Vector& second) const {
+double Vector::angle(const Vector& second) const {
     return (*this, second) / (this->len() * second.len());
 }
 
