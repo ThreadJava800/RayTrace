@@ -49,7 +49,8 @@ void Sphere::visualize(sf::RenderWindow& window, const Vector& camera, Light* li
             if ((i - centerX) * (i - centerX) + (j - centerY) * (j - centerY) <= r2) {
                 // TODO: clean up
                 Vector curPoint    = Vector(i, j, sqrt(r2 - (i - centerX) * (i - centerX) - (j - centerY) * (j - centerY)));
-                Vector vectorColor = ambientCoeff(lights[0]);
+                // Vector vectorColor = ambientCoeff(lights[0]);
+                Vector vectorColor = diffusiveCoeff(camera, curPoint, lights[0]) * 0.5 + ambientCoeff(lights[0]) * 0.5;
 
                 sf::Color pixelColor = sf::Color(vectorColor.getX() * 255, vectorColor.getY() * 255, vectorColor.getZ() * 255);
                 // std::cout << "For: " << i << ',' << j << ": " << vectorColor.getX() << ' ' << vectorColor.getY() << ' ' << vectorColor.getZ() << '\n';
@@ -62,17 +63,33 @@ void Sphere::visualize(sf::RenderWindow& window, const Vector& camera, Light* li
     window.draw(pixelsSp);
 }
 
+Vector Sphere::intersect(const Vector& camera, const Vector& vector) {
+    Vector dir = !(vector - camera);
+    double b = 2 * ((camera - this->center), dir);
+    double c = ((camera - this->center), (camera - this->center)) - this->radius * this->radius;
+
+    double discrim = b * b - 4 * c;
+    if(discrim < 0) return Vector();    // black color
+
+    double result = std::max((-b + sqrt(discrim)) / 2, (-b - sqrt(discrim)) / 2);
+
+    return camera + dir * result;
+}
+
 Vector Sphere::ambientCoeff(const Light& light) {
     return !(light.getColor() * this->color);
 }
 
-Vector Sphere::diffusiveCoeff(const Vector& pointVector, const Light& light) {
-    Vector pointToLight = !(light.getPosition() - pointVector);
-    double degree = pointVector.angle(pointToLight);
+Vector Sphere::diffusiveCoeff(const Vector& camera, const Vector& pointVector, const Light& light) {
+    Vector intersectionPoint = intersect(camera, pointVector);
+    Vector pointToLight      = !(intersectionPoint - this->center);
+    Vector lightVector       = !(light.getPosition() - intersectionPoint);
+
+    double degree = pointToLight.angle(lightVector);
     // std::cout << "Degree: " << degree << '\n';
     // if (degree < 0) degree = 0;
 
-    return Vector(degree, degree, degree) * this->color;
+    return Vector(degree, degree, degree) * !(this->color);
 }
 
 Vector Sphere::phongCoeff(const Vector& camera, const Vector& pointVector, const Light& light) {

@@ -24,6 +24,7 @@ public:
     double angle(const Vector& second) const;
 
     friend Vector operator* (const Vector& a, const Vector& b);
+    friend Vector operator* (const Vector& a, double scalar);
     friend Vector operator+ (const Vector& a, const Vector& b);
     friend Vector operator- (const Vector& a, const Vector& b);
     friend Vector operator/ (const Vector& a, const double scalar);

@@ -40,6 +40,10 @@ Vector operator* (const Vector& a, const Vector& b) {
     return Vector(a.x * b.x, a.y * b.y, a.z * b.z);
 }
 
+Vector operator* (const Vector& a, double scalar) {
+    return Vector(a.x * scalar, a.y * scalar, a.z * scalar);
+}
+
 Vector operator+ (const Vector& a, const Vector& b) {
     return Vector(a.x + b.x, a.y + b.y, a.z + b.z);
 }
@@ -57,5 +61,5 @@ Vector operator! (const Vector& a) {
 }
 
 double operator, (const Vector& a, const Vector& b) {
-    return a.x * b.x + a.y * b.y;
+    return a.x * b.x + a.y * b.y + a.z * b.z;
 }

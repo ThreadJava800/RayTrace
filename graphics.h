@@ -36,8 +36,10 @@ public:
 
     void visualize(sf::RenderWindow& window, const Vector& camera, Light* lights);
 
+    Vector intersect(const Vector& camera, const Vector& vector);
+
     Vector ambientCoeff  (const Light& light);
-    Vector diffusiveCoeff(const Vector& pointVector, const Light& light);
+    Vector diffusiveCoeff(const Vector& camera, const Vector& pointVector, const Light& light);
     Vector phongCoeff    (const Vector& camera, const Vector& pointVector, const Light& light);
 };
 

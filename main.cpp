@@ -4,10 +4,10 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(), "Ray-Casting", sf::Style::Fullscreen);
     window.setPosition(sf::Vector2i(0, 0));
 
-    Vector camera = Vector(300, 300, 300);
+    Vector camera = Vector(960, 540, 0);
 
     Light* lights = new Light[1];
-    Vector lightPos = Vector(1000, 600, 300);
+    Vector lightPos = Vector(1500, 540, 1000);
     Vector lightCol = Vector(255, 255, 255);
     lights[0] = Light(lightPos, lightCol);
 
