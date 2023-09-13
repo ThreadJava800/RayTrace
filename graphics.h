@@ -21,7 +21,7 @@ public:
     void visualize(sf::RenderWindow& window, Vector* lights);
 
     Vector ambientCoeff  (const Vector& light);
-    double diffusiveCoeff(const Vector& light);
+    Vector diffusiveCoeff(const Vector& pointVector, const Vector& light);
     double phongCoeff    (const Vector& light);
 };
 

@@ -31,7 +31,10 @@ void Sphere::visualize(sf::RenderWindow& window, Vector* lights) {
     for (int i = 0; i < width; i++) {
         for (int j = 0; j < height; j++) {
             if ((i - centerX) * (i - centerX) + (j - centerY) * (j - centerY) <= r2) {
-                Vector vectorColor   = ambientCoeff(lights[0]);
+                // TODO: clean up
+                Vector curPoint = !Vector(i, j, sqrt(r2 - (i - centerX) * (i - centerX) - (j - centerY) * (j - centerY)));
+                Vector vectorColor   = diffusiveCoeff(curPoint, lights[0]) + ambientCoeff(lights[0]);
+                // TODO: make 0 if outside range
                 sf::Color pixelColor = sf::Color(vectorColor.getX() * 255, vectorColor.getY() * 255, vectorColor.getZ() * 255);
                 // std::cout << "For: " << i << ',' << j << ": " << vectorColor.getX() << ' ' << vectorColor.getY() << ' ' << vectorColor.getZ() << '\n';
                 pixels.setPixel(i, j, pixelColor);
@@ -45,4 +48,11 @@ void Sphere::visualize(sf::RenderWindow& window, Vector* lights) {
 
 Vector Sphere::ambientCoeff(const Vector& light) {
     return light * (this->color);
+}
+
+Vector Sphere::diffusiveCoeff(const Vector& pointVector, const Vector& light) {
+    Vector pointToLight = light - pointVector;
+    double degree = pointVector.angle(pointToLight);
+
+    return Vector(degree, degree, degree);
 }
