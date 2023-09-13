@@ -86,5 +86,5 @@ src/
 # End of https://www.toptal.com/developers/gitignore/api/c++,visualstudiocode,linux,archlinuxpackages
 
 patcher
+raycast
 *.out
-/.vscode
