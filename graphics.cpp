@@ -46,14 +46,16 @@ void Sphere::visualize(sf::RenderWindow& window, const Vector& camera, Light* li
 
     for (int i = 0; i < width; i++) {
         for (int j = 0; j < height; j++) {
-            // TODO: clean up
-            Vector curPoint    = Vector(i, j, sqrt(r2 - (i - centerX) * (i - centerX) - (j - centerY) * (j - centerY)));
-            // Vector vectorColor = ambientCoeff(lights[0]);
-            Vector vectorColor = diffusiveCoeff(camera, curPoint, lights[0]) * 0.5;
-
-            sf::Color pixelColor = sf::Color(vectorColor.getX() * 255, vectorColor.getY() * 255, vectorColor.getZ() * 255);
-            // std::cout << "For: " << i << ',' << j << ": " << vectorColor.getX() << ' ' << vectorColor.getY() << ' ' << vectorColor.getZ() << '\n';
-            pixels.setPixel(i, j, pixelColor);
+            if ((i - centerX) * (i - centerX) + (j - centerY) * (j - centerY) <= r2) { 
+                // TODO: clean up
+                Vector curPoint    = Vector(i, j, sqrt(r2 - (i - centerX) * (i - centerX) - (j - centerY) * (j - centerY)));
+                // Vector vectorColor = ambientCoeff(lights[0]);
+                Vector vectorColor = phongCoeff(camera, curPoint, lights[0]) * 0.5 + diffusiveCoeff(camera, curPoint, lights[0]) * 0.5;
+    
+                sf::Color pixelColor = sf::Color(vectorColor.getX() * 255, vectorColor.getY() * 255, vectorColor.getZ() * 255);
+                // std::cout << "For: " << i << ',' << j << ": " << vectorColor.getX() << ' ' << vectorColor.getY() << ' ' << vectorColor.getZ() << '\n';
+                pixels.setPixel(i, j, pixelColor);
+            }
         }
     }
     pixelTexture.loadFromImage(pixels);
@@ -94,10 +96,18 @@ Vector Sphere::diffusiveCoeff(const Vector& camera, const Vector& pointVector, c
 }
 
 Vector Sphere::phongCoeff(const Vector& camera, const Vector& pointVector, const Light& light) {
-    Vector pointToLight = !(light.getPosition() - pointVector);
-    Vector reflected    = (pointVector - pointToLight) / (2 * (pointVector, pointToLight));
+    Vector dir                 = !(pointVector - camera);
+    Vector intersectionPoint   = intersect(camera, pointVector);
 
-    double degree = pow(camera.angle(reflected), PHONG_CONSTANT);
+    Vector intersectionToLight = light.getPosition() - intersectionPoint;
+    Vector normalVector        = intersectionPoint - this->center;
+    Vector cameToIntersection  = intersectionPoint - camera;
 
-    return Vector(degree, degree, degree);
+    Vector reflected = (intersectionToLight - (normalVector * (!intersectionToLight, !normalVector))) * (-1);
+
+    double coeff = (!(cameToIntersection * (-1)), !reflected);
+    if (coeff < 0) coeff = 0;
+    coeff = pow(coeff, PHONG_CONSTANT);
+
+    return Vector(coeff, coeff, coeff);
 }
