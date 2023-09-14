@@ -65,5 +65,5 @@ double operator, (const Vector& a, const Vector& b) {
 }
 
 bool operator!=(const Vector& a, const Vector& b) {
-    return (a.x == b.x && a.y == b.y && a.z == b.z);
+    return !(a.x == b.x && a.y == b.y && a.z == b.z);
 }

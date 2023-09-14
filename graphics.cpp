@@ -50,7 +50,7 @@ void Sphere::visualize(sf::RenderWindow& window, const Vector& camera, Light* li
                 // TODO: clean up
                 Vector curPoint    = Vector(i, j, sqrt(r2 - (i - centerX) * (i - centerX) - (j - centerY) * (j - centerY)));
                 // Vector vectorColor = ambientCoeff(lights[0]);
-                Vector vectorColor = phongCoeff(camera, curPoint, lights[0]) * 0.5 + diffusiveCoeff(camera, curPoint, lights[0]) * 0.5;
+                Vector vectorColor = phongCoeff(camera, curPoint, lights[0]) * 0.33 + diffusiveCoeff(camera, curPoint, lights[0]) * 0.33 + ambientCoeff(camera, curPoint, lights[0]) * 0.33;
     
                 sf::Color pixelColor = sf::Color(vectorColor.getX() * 255, vectorColor.getY() * 255, vectorColor.getZ() * 255);
                 // std::cout << "For: " << i << ',' << j << ": " << vectorColor.getX() << ' ' << vectorColor.getY() << ' ' << vectorColor.getZ() << '\n';
@@ -78,10 +78,9 @@ Vector Sphere::intersect(const Vector& camera, const Vector& vector) {
 
 Vector Sphere::ambientCoeff(const Vector& camera, const Vector& pointVector, const Light& light) {
     Vector intersectionPoint = intersect(camera, pointVector);
-
     if (intersectionPoint != Vector())
         return !(light.getColor() * this->color);
-    return Vector(0, 0, 0);
+    return Vector();
 }
 
 Vector Sphere::diffusiveCoeff(const Vector& camera, const Vector& pointVector, const Light& light) {
