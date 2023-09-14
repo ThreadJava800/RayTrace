@@ -7,7 +7,7 @@ int main() {
     Vector camera = Vector(960, 540, 0);
 
     Light* lights = new Light[1];
-    Vector lightPos = Vector(1500, 540, 1000);
+    Vector lightPos = Vector(960, 540, 300);
     Vector lightCol = Vector(255, 255, 255);
     lights[0] = Light(lightPos, lightCol);
 

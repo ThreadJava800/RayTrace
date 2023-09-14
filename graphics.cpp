@@ -65,13 +65,15 @@ void Sphere::visualize(sf::RenderWindow& window, const Vector& camera, Light* li
 
 Vector Sphere::intersect(const Vector& camera, const Vector& vector) {
     Vector dir = !(vector - camera);
-    double b = 2 * ((camera - this->center), dir);
-    double c = ((camera - this->center), (camera - this->center)) - this->radius * this->radius;
+    Vector tmp = !(camera - this->center);
+
+    double b = 2 * (tmp, dir);
+    double c = (tmp, tmp) - this->radius * this->radius;
 
     double discrim = b * b - 4 * c;
     if(discrim < 0) return Vector();    // black color
 
-    double result = std::max((-b + sqrt(discrim)) / 2, (-b - sqrt(discrim)) / 2);
+    double result = std::min((-b + sqrt(discrim)) / 2, (-b - sqrt(discrim)) / 2);
 
     return camera + dir * result;
 }
@@ -82,8 +84,10 @@ Vector Sphere::ambientCoeff(const Light& light) {
 
 Vector Sphere::diffusiveCoeff(const Vector& camera, const Vector& pointVector, const Light& light) {
     Vector intersectionPoint = intersect(camera, pointVector);
-    Vector pointToLight      = !(intersectionPoint - this->center);
-    Vector lightVector       = !(light.getPosition() - intersectionPoint);
+    // std::cout << pointVector.getX() << ' ' << pointVector.getY() << ' ' << pointVector.getZ() << ' ' <<intersectionPoint.getX() << ' ' << intersectionPoint.getY() << ' ' << intersectionPoint.getZ() << '\n';
+
+    Vector pointToLight = intersectionPoint - this->center;
+    Vector lightVector  = light.getPosition() - intersectionPoint;
 
     double degree = pointToLight.angle(lightVector);
     // std::cout << "Degree: " << degree << '\n';
