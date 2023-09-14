@@ -4,14 +4,14 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(), "Ray-Casting", sf::Style::Fullscreen);
     window.setPosition(sf::Vector2i(0, 0));
 
-    Vector camera = Vector(500, 500, 0);
+    Vector camera = Vector(960, 500, 0);
 
     Light* lights = new Light[1];
-    Vector lightPos = Vector(540, 540, 0);
+    Vector lightPos = Vector(960, 500, 0);
     Vector lightCol = Vector(255, 255, 255);
     lights[0] = Light(lightPos, lightCol);
 
-    Sphere sphere  = Sphere(Vector(500, 500, 300), 250, Vector(255, 0, 0));
+    Sphere sphere  = Sphere(Vector(960, 500, 300), 400, Vector(255, 0, 0));
 
     while (window.isOpen())
     {
