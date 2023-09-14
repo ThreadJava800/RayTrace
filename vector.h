@@ -30,6 +30,7 @@ public:
     friend Vector operator/ (const Vector& a, const double scalar);
     friend Vector operator! (const Vector& a);                      // normalized
     friend double operator, (const Vector& a, const Vector& b); 
+    friend bool   operator!=(const Vector& a, const Vector& b);
 };
 
 #endif

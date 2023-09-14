@@ -63,3 +63,7 @@ Vector operator! (const Vector& a) {
 double operator, (const Vector& a, const Vector& b) {
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }
+
+bool operator!=(const Vector& a, const Vector& b) {
+    return (a.x == b.x && a.y == b.y && a.z == b.z);
+}
