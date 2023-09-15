@@ -35,9 +35,6 @@ void Sphere::visualize(sf::RenderWindow& window, const Vector& camera, Light* li
     int height = window.getSize().y;
     double r2  = this->radius * this->radius;
 
-    double centerX = this->center.getX();
-    double centerY = this->center.getY();
-
     sf::Image   pixels;
     sf::Texture pixelTexture;
     sf::Sprite  pixelsSp;
@@ -46,8 +43,8 @@ void Sphere::visualize(sf::RenderWindow& window, const Vector& camera, Light* li
 
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
-            double x = -50 + i * (100 / double(height));
-            double y =  50 + j * (-200 / double(width));
+            double x = -50 + j * (100 / double(height));
+            double y =  50 + i * (-100 / double(height));
 
             // if ((x - centerX) * (x - centerX) + (i - centerY) * (i - centerY) <= r2) { 
                 // std::cout << width << ' ' << height << '\n';
