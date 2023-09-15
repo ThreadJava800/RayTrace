@@ -44,13 +44,13 @@ void Sphere::visualize(sf::RenderWindow& window, const Vector& camera, Light* li
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             double x = -50 + j * (100 / double(height));
-            double y =  50 + i * (-100 / double(height));
+            double y =  50 + i * (-100 / double(width));
 
             // if ((x - centerX) * (x - centerX) + (i - centerY) * (i - centerY) <= r2) { 
                 // std::cout << width << ' ' << height << '\n';
 
                 Vector    pointOnScreen = Vector(x, 50, y);
-                Vector    vectorColor   = diffusiveCoeff(camera, pointOnScreen, lights[0]);
+                Vector    vectorColor   = phongCoeff(camera, pointOnScreen, lights[0]) * 0.5 + diffusiveCoeff(camera, pointOnScreen, lights[0]) * 0.5;
                 sf::Color pixelColor    = sf::Color(vectorColor.getX(), vectorColor.getY(), vectorColor.getZ());
 
                 pixels.setPixel(j, i, pixelColor);
@@ -95,18 +95,17 @@ Vector Sphere::diffusiveCoeff(const Vector& camera, const Vector& pointVector, c
 }
 
 Vector Sphere::phongCoeff(const Vector& camera, const Vector& pointVector, const Light& light) {
-    Vector dir                 = !(pointVector - camera);
-    Vector intersectionPoint   = intersect(camera, pointVector);
+    Vector intersectionPoint = intersect(camera, pointVector);
+    Vector pointToLight      = intersectionPoint - this->center;
+    Vector lightVector       = light.getPosition() - intersectionPoint;
+    Vector camToIntersect    = intersectionPoint - camera;
 
-    Vector intersectionToLight = light.getPosition() - intersectionPoint;
-    Vector normalVector        = intersectionPoint - this->center;
-    Vector cameToIntersection  = intersectionPoint - camera;
+    Vector reflect = (lightVector - camToIntersect * 2 * (!lightVector, !camToIntersect)) * (-1);
 
-    Vector reflected = (intersectionToLight - (normalVector * (!intersectionToLight, !normalVector))) * (-1);
+    double degree = (!(pointToLight), !reflect);
+    if (degree < 0) degree = 0;
 
-    double coeff = (!(cameToIntersection * (-1)), !reflected);
-    if (coeff < 0) coeff = 0;
-    coeff = pow(coeff, PHONG_CONSTANT);
+    degree = pow(degree, 32);
 
-    return Vector(coeff, coeff, coeff);
+    return Vector(degree, degree, degree) * 255;
 }
