@@ -22,10 +22,12 @@ public:
 
     // cos of angle between two vectors (this and second)
     double angle(const Vector& second) const;
+    Vector rotated(double degree);
 
     friend Vector operator* (const Vector& a, const Vector& b);
     friend Vector operator* (const Vector& a, double scalar);
     friend Vector operator+ (const Vector& a, const Vector& b);
+    friend void   operator+=(      Vector& a, const Vector& b);
     friend Vector operator- (const Vector& a, const Vector& b);
     friend Vector operator/ (const Vector& a, const double scalar);
     friend Vector operator! (const Vector& a);                      // normalized

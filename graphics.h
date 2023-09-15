@@ -16,7 +16,8 @@ public:
     explicit Light();
     explicit Light(Vector& position, Vector& color);
 
-    Vector getPosition() const;
+    Vector getPosition();
+    void   setPosition(Vector position);
     Vector getColor() const;
 
     ~Light() {};
@@ -34,13 +35,10 @@ public:
 
     ~Sphere();
 
-    void visualize(sf::RenderWindow& window, const Vector& camera, Light* lights);
+    void visualize(sf::RenderWindow& window, const Vector& camera, Light* lights, size_t lightNum);
 
     Vector intersect(const Vector& camera, const Vector& vector);
-
-    Vector ambientCoeff  (const Vector& camera, const Vector& pointVector, const Light& light);
-    Vector diffusiveCoeff(const Vector& camera, const Vector& pointVector, const Light& light);
-    Vector phongCoeff    (const Vector& camera, const Vector& pointVector, const Light& light);
+    Vector computeColor(const Vector& camera, const Vector& pointVector, Light& light);
 };
 
 #define ON_ERROR(expr, errStr, retVal) {                 \

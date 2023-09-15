@@ -8,8 +8,12 @@ Light::Light(Vector& position, Vector& color) :
     position(position),
     color(color)      {}
 
-Vector Light::getPosition() const {
+Vector Light::getPosition() {
     return this->position;
+}
+
+void Light::setPosition(Vector position) {
+    this->position = position;
 }
 
 Vector Light::getColor() const {
@@ -28,7 +32,7 @@ Sphere::Sphere(const Vector& center, const double radius, const Vector& color) :
 
 Sphere::~Sphere() {}
 
-void Sphere::visualize(sf::RenderWindow& window, const Vector& camera, Light* lights) {
+void Sphere::visualize(sf::RenderWindow& window, const Vector& camera, Light* lights, size_t lightNum) {
     ON_ERROR(!lights, "Null pointer exception.",);
 
     int width  = window.getSize().x;
@@ -45,16 +49,15 @@ void Sphere::visualize(sf::RenderWindow& window, const Vector& camera, Light* li
         for (int j = 0; j < width; j++) {
             double x = -50 + j * (100 / double(height));
             double y =  50 + i * (-100 / double(width));
+            Vector pointOnScreen = Vector(x, 50, y);
+            
+            Vector vectorColor = Vector();
+            for (int i = 0; i < lightNum; i++) {
+                vectorColor += computeColor(camera, pointOnScreen, lights[i]) / double(lightNum);
+            }
 
-            // if ((x - centerX) * (x - centerX) + (i - centerY) * (i - centerY) <= r2) { 
-                // std::cout << width << ' ' << height << '\n';
-
-                Vector    pointOnScreen = Vector(x, 50, y);
-                Vector    vectorColor   = phongCoeff(camera, pointOnScreen, lights[0]) * 0.33 + diffusiveCoeff(camera, pointOnScreen, lights[0]) * 0.33 + ambientCoeff(camera, pointOnScreen, lights[0]) * 0.33;
-                sf::Color pixelColor    = sf::Color(vectorColor.getX(), vectorColor.getY(), vectorColor.getZ());
-
-                pixels.setPixel(j, i, pixelColor);
-            // }
+            sf::Color pixelColor = sf::Color(vectorColor.getX(), vectorColor.getY(), vectorColor.getZ());
+            pixels.setPixel(j, i, pixelColor);
         }
     }
 
@@ -76,36 +79,30 @@ Vector Sphere::intersect(const Vector& camera, const Vector& vector) {
     return camera + dir * result;
 }
 
-Vector Sphere::ambientCoeff(const Vector& camera, const Vector& pointVector, const Light& light) {
+Vector Sphere::computeColor(const Vector& camera, const Vector& pointVector, Light& light) {
+    Vector resultVec = Vector();
+
     Vector intersectionPoint = intersect(camera, pointVector - camera);
-    if (intersectionPoint != Vector())
-        return !(light.getColor() * this->color) * 255;
-    return Vector();
-}
-
-Vector Sphere::diffusiveCoeff(const Vector& camera, const Vector& pointVector, const Light& light) {
-    Vector intersectionPoint = intersect(camera, pointVector);
-    Vector pointToLight      = !(intersectionPoint - this->center);
-    Vector lightVector       = !(light.getPosition() - intersectionPoint);
-
-    double degree = pointToLight.angle(lightVector);
-    if (degree < 0) degree = 0;
-
-    return Vector(degree, degree, degree) * this->color;
-}
-
-Vector Sphere::phongCoeff(const Vector& camera, const Vector& pointVector, const Light& light) {
-    Vector intersectionPoint = intersect(camera, pointVector);
     Vector pointToLight      = intersectionPoint - this->center;
     Vector lightVector       = light.getPosition() - intersectionPoint;
     Vector camToIntersect    = intersectionPoint - camera;
 
     Vector reflect = (lightVector - camToIntersect * 2 * (!lightVector, !camToIntersect)) * (-1);
 
-    double degree = (!pointToLight, !reflect);
+    // ambient
+    if (intersectionPoint != Vector())
+        resultVec += !(light.getColor() * this->color) * 255;
+
+    // diffusive
+    double degree = (!pointToLight, !lightVector);
     if (degree < 0) degree = 0;
+    resultVec += Vector(degree, degree, degree) * this->color;
 
+    // blick
+    degree = (!pointToLight, !reflect);
+    if (degree < 0) degree = 0;
     degree = pow(degree, 32);
+    resultVec += Vector(degree, degree, degree) * 255;
 
-    return Vector(degree, degree, degree) * 255;
+    return resultVec * 0.33;
 }
