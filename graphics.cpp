@@ -50,7 +50,7 @@ void Sphere::visualize(sf::RenderWindow& window, const Vector& camera, Light* li
                 // std::cout << width << ' ' << height << '\n';
 
                 Vector    pointOnScreen = Vector(x, 50, y);
-                Vector    vectorColor   = phongCoeff(camera, pointOnScreen, lights[0]) * 0.5 + diffusiveCoeff(camera, pointOnScreen, lights[0]) * 0.5;
+                Vector    vectorColor   = phongCoeff(camera, pointOnScreen, lights[0]) * 0.33 + diffusiveCoeff(camera, pointOnScreen, lights[0]) * 0.33 + ambientCoeff(camera, pointOnScreen, lights[0]) * 0.33;
                 sf::Color pixelColor    = sf::Color(vectorColor.getX(), vectorColor.getY(), vectorColor.getZ());
 
                 pixels.setPixel(j, i, pixelColor);
@@ -79,7 +79,7 @@ Vector Sphere::intersect(const Vector& camera, const Vector& vector) {
 Vector Sphere::ambientCoeff(const Vector& camera, const Vector& pointVector, const Light& light) {
     Vector intersectionPoint = intersect(camera, pointVector - camera);
     if (intersectionPoint != Vector())
-        return !(light.getColor() * this->color);
+        return !(light.getColor() * this->color) * 255;
     return Vector();
 }
 
@@ -102,7 +102,7 @@ Vector Sphere::phongCoeff(const Vector& camera, const Vector& pointVector, const
 
     Vector reflect = (lightVector - camToIntersect * 2 * (!lightVector, !camToIntersect)) * (-1);
 
-    double degree = (!(pointToLight), !reflect);
+    double degree = (!pointToLight, !reflect);
     if (degree < 0) degree = 0;
 
     degree = pow(degree, 32);
