@@ -47,9 +47,9 @@ void Sphere::visualize(sf::RenderWindow& window, const Vector& camera, Light* li
 
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
-            double x = -50 + j * (100 / double(height));
-            double y =  50 + i * (-100 / double(width));
-            Vector pointOnScreen = Vector(x, 50, y);
+            double x = j * (UNIT_X / double(height)) + START_X;
+            double z = i * (UNIT_Z / double(width))  + START_Z;
+            Vector pointOnScreen = Vector(x, START_Y, z);
             
             Vector vectorColor = Vector();
             for (int i = 0; i < lightNum; i++) {
@@ -101,7 +101,7 @@ Vector Sphere::computeColor(const Vector& camera, const Vector& pointVector, Lig
     // blick
     degree = (!(pointToLight * (-1)), !reflect);
     if (degree < 0) degree = 0;
-    degree = pow(degree, 32);
+    degree = pow(degree, PHONG_CONSTANT);
     resultVec += Vector(degree, degree, degree) * 255;
 
     return resultVec * 0.33;
