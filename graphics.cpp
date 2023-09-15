@@ -44,62 +44,57 @@ void Sphere::visualize(sf::RenderWindow& window, const Vector& camera, Light* li
 
     pixels.create(width, height, DEFAULT_COLOR);
 
-    for (int i = 0; i < width; i++) {
-        for (int j = 0; j < height; j++) {
-            if ((i - centerX) * (i - centerX) + (j - centerY) * (j - centerY) <= r2) { 
-                Vector curPoint    = !Vector(i, j, 1);
-                Vector vectorColor = diffusiveCoeff(camera, curPoint, lights[0]) * 0.5;
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            double x = -50 + i * (100 / double(height));
+            double y =  50 + j * (-200 / double(width));
 
-                // std::cout << vectorColor.getX() << ' ' << vectorColor.getY() << ' ' << vectorColor.getZ() << '\n';
-    
-                sf::Color pixelColor = sf::Color(vectorColor.getX() * 255, vectorColor.getY() * 255, vectorColor.getZ() * 255);
-                pixels.setPixel(i, j, pixelColor);
-            }
+            // if ((x - centerX) * (x - centerX) + (i - centerY) * (i - centerY) <= r2) { 
+                // std::cout << width << ' ' << height << '\n';
+
+                Vector    pointOnScreen = Vector(x, 50, y);
+                Vector    vectorColor   = diffusiveCoeff(camera, pointOnScreen, lights[0]);
+                sf::Color pixelColor    = sf::Color(vectorColor.getX(), vectorColor.getY(), vectorColor.getZ());
+
+                pixels.setPixel(j, i, pixelColor);
+            // }
         }
     }
+
     pixelTexture.loadFromImage(pixels);
     pixelsSp.setTexture(pixelTexture);
     window.draw(pixelsSp);
 }
 
 Vector Sphere::intersect(const Vector& camera, const Vector& vector) {
-    Vector cam_to_sphere_center = camera - this->center; 
-    Vector cam_to_sphere_center_norm = !cam_to_sphere_center;
+    Vector dir = !(vector - camera);
+    double b = 2 * ((camera - this->center), dir);
+    double c = ((camera - this->center), (camera - this->center)) - this->radius * this->radius;
 
-    Vector AK = (!vector) * sqrt((cam_to_sphere_center, cam_to_sphere_center)) * ((!vector, cam_to_sphere_center_norm));
-    Vector OK = cam_to_sphere_center * (-1) + AK;
-    
-    if ((OK,OK) > (this->radius * this->radius)) 
-    {
-        return Vector();
-    }
+    double discrim = b * b - 4 * c;
+    if(discrim < 0) return Vector();    // black color
 
-    Vector directsqrt = (!vector) * (sqrt (this->radius * this->radius - (OK, OK)));
-    Vector AP = AK - directsqrt;
-    Vector joint_point_vec = AP + camera;
-    
-    return joint_point_vec;
+    double result = std::min((-b + sqrt(discrim)) / 2, (-b - sqrt(discrim)) / 2);
+
+    return camera + dir * result;
 }
 
 Vector Sphere::ambientCoeff(const Vector& camera, const Vector& pointVector, const Light& light) {
-    Vector intersectionPoint = intersect(camera, !(camera - pointVector));
+    Vector intersectionPoint = intersect(camera, pointVector - camera);
     if (intersectionPoint != Vector())
         return !(light.getColor() * this->color);
     return Vector();
 }
 
 Vector Sphere::diffusiveCoeff(const Vector& camera, const Vector& pointVector, const Light& light) {
-    Vector intersectionPoint   = intersect(camera, !(pointVector - camera));
+    Vector intersectionPoint = intersect(camera, pointVector);
+    Vector pointToLight      = !(intersectionPoint - this->center);
+    Vector lightVector       = !(light.getPosition() - intersectionPoint);
 
-    // std::cout << intersectionPoint.getX() << ' ' << intersectionPoint.getY() << ' ' << intersectionPoint.getZ() << '\n';
+    double degree = pointToLight.angle(lightVector);
+    if (degree < 0) degree = 0;
 
-    Vector intersectToLight = !(light.getPosition() - intersectionPoint);
-    Vector normalVec        = !(intersectionPoint - this->center);
-
-    double coeff =  (intersectionPoint, normalVec);
-    if (coeff < 0) coeff = 0;
-
-    return Vector(coeff, coeff, coeff) * !(this->color);
+    return Vector(degree, degree, degree) * this->color;
 }
 
 Vector Sphere::phongCoeff(const Vector& camera, const Vector& pointVector, const Light& light) {
