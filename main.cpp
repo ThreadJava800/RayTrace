@@ -7,14 +7,14 @@ int main() {
                          // x      y
     Vector camera = Vector(0, 0, 0);
 
-    Light* lights = new Light[2];
-    Vector lightPos = Vector(50, 0, 0);
+    Light* lights = new Light[1];
+    Vector lightPos = Vector(100, 0, 0);
     Vector lightCol = Vector(255, 255, 255);
     lights[0] = Light(lightPos, lightCol);
 
-    Vector lightPos2 = Vector(-50, 0, -50);
-    Vector lightCol2 = Vector(255, 255, 255);
-    lights[1] = Light(lightPos2, lightCol2);
+    // Vector lightPos2 = Vector(-50, 0, -50);
+    // Vector lightCol2 = Vector(255, 255, 255);
+    // lights[1] = Light(lightPos2, lightCol2);
 
     Sphere sphere  = Sphere(Vector(0, 150, 0), 50, Vector(255, 0, 0));
 
@@ -36,9 +36,9 @@ int main() {
             }
         }
 
-        lights[1].setPosition(lights[1].getPosition().rotated(50));
+        // lights[1].setPosition(lights[1].getPosition().rotated(50));
 
-        sphere.visualize(window, camera, lights, 2);
+        sphere.visualize(window, camera, lights, 1);
         window.display();
 
         // std::cout << "End\n";

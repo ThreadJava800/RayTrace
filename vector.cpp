@@ -48,7 +48,7 @@ Vector Vector::rotated(double degree) {
     return res;
 }
 
-inline double Vector::len() const {
+double Vector::len() const {
     return sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
 }
 

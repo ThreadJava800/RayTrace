@@ -18,7 +18,7 @@ public:
     double getY() const;
     double getZ() const;
 
-    inline double len() const;
+    double len() const;
 
     // cos of angle between two vectors (this and second)
     double angle(const Vector& second) const;

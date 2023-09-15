@@ -87,7 +87,7 @@ Vector Sphere::computeColor(const Vector& camera, const Vector& pointVector, Lig
     Vector lightVector       = light.getPosition() - intersectionPoint;
     Vector camToIntersect    = intersectionPoint - camera;
 
-    Vector reflect = (lightVector - camToIntersect * 2 * (!lightVector, !camToIntersect)) * (-1);
+    Vector reflect = pointToLight * 2 * (!lightVector, !pointToLight) - lightVector;
 
     // ambient
     if (intersectionPoint != Vector())
@@ -99,7 +99,7 @@ Vector Sphere::computeColor(const Vector& camera, const Vector& pointVector, Lig
     resultVec += Vector(degree, degree, degree) * this->color;
 
     // blick
-    degree = (!pointToLight, !reflect);
+    degree = (!(pointToLight * (-1)), !reflect);
     if (degree < 0) degree = 0;
     degree = pow(degree, 32);
     resultVec += Vector(degree, degree, degree) * 255;
