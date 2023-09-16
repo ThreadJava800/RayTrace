@@ -96,13 +96,13 @@ Vector Sphere::computeColor(const Vector& camera, const Vector& pointVector, Lig
     // diffusive
     double degree = (!pointToLight, !lightVector);
     if (degree < 0) degree = 0;
-    resultVec += Vector(degree, degree, degree) * this->color;
+    resultVec += Vector(degree, degree, degree) * light.getColor();
 
     // blick
     degree = (!(pointToLight * (-1)), !reflect);
     if (degree < 0) degree = 0;
     degree = pow(degree, PHONG_CONSTANT);
-    resultVec += Vector(degree, degree, degree) * 255;
+    resultVec += Vector(degree, degree, degree) * light.getColor();
 
     return resultVec * 0.33;
 }

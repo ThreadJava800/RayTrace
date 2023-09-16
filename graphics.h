@@ -5,7 +5,7 @@
 #include "vector.h"
 
 const sf::Color DEFAULT_COLOR  = sf::Color::Black;
-const int       PHONG_CONSTANT =  32;
+const double    PHONG_CONSTANT =  32;
 const int       START_X        = -50;
 const int       START_Y        =  50;
 const int       START_Z        =  50;

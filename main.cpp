@@ -12,7 +12,7 @@ int main() {
     lights[0] = Light(lightPos, lightCol);
 
     Vector lightPos2 = Vector(-50, 0, -50);
-    Vector lightCol2 = Vector(255, 255, 255);
+    Vector lightCol2 = Vector(0, 0, 255);
     lights[1] = Light(lightPos2, lightCol2);
 
     Sphere sphere  = Sphere(Vector(0, 150, 0), 50, Vector(255, 0, 0));
